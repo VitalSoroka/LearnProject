@@ -1,0 +1,43 @@
+# Use postgres/example user/password credentials
+version: '3.9'
+
+volumes:
+  local-storage:
+
+
+services:
+
+  db:
+    image: postgres:17.0-alpine3.20
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+
+    volumes:
+      - type: bind
+        source: /home/begemot/storage/pgslq/data
+        target: /var/lib/postgresql/data/pgdata
+#      - local-storage:
+    environment:
+      POSTGRES_DB: storage
+      POSTGRES_PASSWORD: adminpass
+      POSTGRES_USER: admin
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d storage"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256Mb
+    ports:
+      - 5432:5432
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
