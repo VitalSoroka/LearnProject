@@ -11,13 +11,11 @@ services:
     image: postgres:17.0-alpine3.20
     restart: always
     # set shared memory limit when using docker-compose
-    shm_size: 128mb
+    #shm_size: 128mb
 
     volumes:
-      - type: bind
-        source: /home/begemot/storage/pgslq/data
-        target: /var/lib/postgresql/data/pgdata
-#      - local-storage:
+      - local-storage:/var/lib/postgresql/data/pgdata
+
     environment:
       POSTGRES_DB: storage
       POSTGRES_PASSWORD: adminpass
@@ -41,3 +39,8 @@ services:
     restart: always
     ports:
       - 8081:8080
+
+  callboard-service-backend:
+    build: ./callboard-service/
+    ports:
+      - 8080:8080
